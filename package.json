@@ -1,0 +1,30 @@
+{
+    "name": "f1-telegram-bot",
+    "version": "1.0.0",
+    "description": "A bot for Telegram to retrieve F1 data",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ablanco/f1-telegram-bot.git"
+    },
+    "author": "alejandro.b.e@gmail.com",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ablanco/f1-telegram-bot/issues"
+    },
+    "homepage": "https://github.com/ablanco/f1-telegram-bot#readme",
+    "dependencies": {
+        "formula-one-js": "^1.0.6",
+        "node-telegram-bot-api": "^0.57.0",
+        "telegraf": "^4.8.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.15.0",
+        "eslint-config-prettier": "^8.5.0",
+        "prettier": "^2.6.2"
+    }
+}
