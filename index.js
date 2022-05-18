@@ -3,7 +3,14 @@
 
 import { Telegraf } from 'telegraf';
 import Settings from './src/settings.js';
-import { drivers, teams, calendar, next } from './src/commands.js';
+import {
+    drivers,
+    teams,
+    calendar,
+    next,
+    lastQualy,
+    lastRace,
+} from './src/commands.js';
 
 const bot = new Telegraf(Settings.token);
 
@@ -11,6 +18,8 @@ bot.command('drivers', drivers);
 bot.command('teams', teams);
 bot.command('calendar', calendar);
 bot.command('next', next);
+bot.command('lastQualy', lastQualy);
+bot.command('lastRace', lastRace);
 
 // bot.on('callback_query', (ctx) => {
 //     // Explicit usage
