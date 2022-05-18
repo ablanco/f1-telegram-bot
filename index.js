@@ -18,8 +18,8 @@ bot.command('drivers', drivers);
 bot.command('teams', teams);
 bot.command('calendar', calendar);
 bot.command('next', next);
-bot.command('lastQualy', lastQualy);
-bot.command('lastRace', lastRace);
+bot.command('lastqualy', lastQualy);
+bot.command('lastrace', lastRace);
 
 // bot.on('callback_query', (ctx) => {
 //     // Explicit usage
