@@ -7,6 +7,7 @@ import {
     drivers,
     teams,
     calendar,
+    current,
     next,
     lastQualy,
     lastRace,
@@ -17,26 +18,10 @@ const bot = new Telegraf(Settings.token);
 bot.command('drivers', drivers);
 bot.command('teams', teams);
 bot.command('calendar', calendar);
+bot.command('current', current);
 bot.command('next', next);
 bot.command('lastqualy', lastQualy);
 bot.command('lastrace', lastRace);
-
-// bot.on('callback_query', (ctx) => {
-//     // Explicit usage
-//     ctx.telegram.answerCbQuery(ctx.callbackQuery.id);
-
-//     // Using context shortcut
-//     ctx.answerCbQuery();
-// });
-
-// bot.on('inline_query', (ctx) => {
-//     const result = [];
-//     // Explicit usage
-//     ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result);
-
-//     // Using context shortcut
-//     ctx.answerInlineQuery(result);
-// });
 
 bot.launch();
 

@@ -3,8 +3,11 @@
 
 import F1 from 'formula-one-js';
 import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter.js';
 
-import { formatDate, formatDateTime } from './utils.js';
+import { formatDate, formatDateTime, renderWeekendCalendar } from './utils.js';
+
+dayjs.extend(isSameOrAfter);
 
 const drivers = function (ctx) {
     const { standings } = F1.requests();
@@ -49,9 +52,42 @@ const calendar = function (ctx) {
     });
 };
 
-const next = function (ctx) {
+const current = function (ctx) {
     const { schedule } = F1.requests();
     const now = dayjs();
+
+    if (now.day() > 0 && now.day() < 5) {
+        // 0 is Sunday, 6 is Saturday
+        ctx.reply('Today is not a race weekend');
+        return;
+    }
+
+    schedule.getCurrentSchedule().then((scheduleList) => {
+        let current = null;
+        scheduleList.forEach((weekend) => {
+            const raceDay = dayjs(weekend.date, 'YYYY-MM-DD');
+            if (current === null && raceDay.isSameOrAfter(now, 'day')) {
+                current = weekend;
+            }
+        });
+
+        if (current) {
+            const response = renderWeekendCalendar(current);
+            ctx.replyWithHTML(response.join('\n'));
+        } else {
+            ctx.reply('Today is not a race weekend');
+        }
+    });
+};
+
+const next = function (ctx) {
+    const { schedule } = F1.requests();
+    let now = dayjs();
+
+    if (now.day() === 0 || now.day() > 4) {
+        // 0 is Sunday, 6 is Saturday
+        now = now.add(3, 'day'); // Avoid current race weekend
+    }
 
     schedule.getCurrentSchedule().then((scheduleList) => {
         let next = null;
@@ -62,43 +98,7 @@ const next = function (ctx) {
             }
         });
 
-        const response = [`<b>${next.raceName}</b>`];
-        let datetime;
-        if (next.FirstPractice) {
-            datetime = formatDateTime(
-                next.FirstPractice.date,
-                next.FirstPractice.time
-            );
-            response.push(`- FP1: ${datetime}`);
-        }
-        if (next.SecondPractice) {
-            datetime = formatDateTime(
-                next.SecondPractice.date,
-                next.SecondPractice.time
-            );
-            response.push(`- FP2: ${datetime}`);
-        }
-        if (next.ThirdPractice) {
-            datetime = formatDateTime(
-                next.ThirdPractice.date,
-                next.ThirdPractice.time
-            );
-            response.push(`- FP3: ${datetime}`);
-        }
-        if (next.Qualifying) {
-            datetime = formatDateTime(
-                next.Qualifying.date,
-                next.Qualifying.time
-            );
-            response.push(`- Qualy: ${datetime}`);
-        }
-        if (next.Sprint) {
-            datetime = formatDateTime(next.Sprint.date, next.Sprint.time);
-            response.push(`- Sprint: ${datetime}`);
-        }
-        datetime = formatDateTime(next.date, next.time);
-        response.push(`- Race: ${datetime}`);
-
+        const response = renderWeekendCalendar(next);
         ctx.replyWithHTML(response.join('\n'));
     });
 };
@@ -155,4 +155,4 @@ const lastRace = function (ctx) {
     });
 };
 
-export { drivers, teams, calendar, next, lastQualy, lastRace };
+export { drivers, teams, calendar, current, next, lastQualy, lastRace };
