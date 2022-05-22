@@ -56,6 +56,7 @@ const renderWeekendCalendar = function (weekend) {
     }
     datetime = formatDateTime(weekend.date, weekend.time);
     response.push(`- Race: ${datetime}`);
+    response.push('\n<i>Times are in CEST</i>');
 
     return response;
 };

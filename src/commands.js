@@ -16,7 +16,7 @@ const drivers = function (ctx) {
         // console.log(standingList);
 
         const response = standingList.map((driver) => {
-            return `${driver.positionText} | ${driver.Driver.givenName} ${driver.Driver.familyName} - ${driver.Driver.code} (<i>${driver.Driver.permanentNumber}</i>) - Points: ${driver.points}`;
+            return `${driver.positionText} | ${driver.Driver.givenName} ${driver.Driver.familyName} - ${driver.Driver.code} (<i>${driver.Driver.permanentNumber}</i>)\n     - Points: ${driver.points}`;
         });
 
         ctx.replyWithHTML(response.join('\n'));
@@ -39,16 +39,32 @@ const teams = function (ctx) {
 
 const calendar = function (ctx) {
     const { schedule } = F1.requests();
+    const now = dayjs();
+    let found = false;
 
     schedule.getCurrentSchedule().then((scheduleList) => {
         // console.log(scheduleList);
 
         const response = scheduleList.map((weekend) => {
+            const raceDay = dayjs(weekend.date, 'YYYY-MM-DD');
             const datetime = formatDateTime(weekend.date, weekend.time);
-            return `${weekend.round} | ${weekend.raceName}  ~~~ ${datetime}`;
-        });
+            let bold = false;
+            let result = '';
 
-        ctx.reply(response.join('\n'));
+            if (!found && raceDay.isSameOrAfter(now, 'day')) {
+                found = true;
+                bold = true;
+                result = '<b>';
+            }
+            result += `${weekend.round} | ${weekend.raceName}\n     - ${datetime}`;
+            if (bold) {
+                result += '</b>';
+            }
+            return result;
+        });
+        response.push('\n<i>Times are in CEST</i>');
+
+        ctx.replyWithHTML(response.join('\n'));
     });
 };
 
