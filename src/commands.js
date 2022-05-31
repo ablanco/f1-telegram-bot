@@ -10,13 +10,18 @@ import { formatDate, formatDateTime, renderWeekendCalendar } from './utils.js';
 dayjs.extend(isSameOrAfter);
 
 const drivers = function (ctx) {
-    const { standings } = F1.requests();
+    const { drivers } = F1.requests();
 
-    standings.getCurrentDriverStanding().then((standingList) => {
-        // console.log(standingList);
+    drivers.getDriversByYear(dayjs().year()).then((drivers) => {
+        // console.log(drivers);
 
-        const response = standingList.map((driver) => {
-            return `${driver.positionText} | ${driver.Driver.givenName} ${driver.Driver.familyName} - ${driver.Driver.code} (<i>${driver.Driver.permanentNumber}</i>)\n     - Points: ${driver.points}`;
+        const response = drivers.map((driver) => {
+            return [
+                `<strong>${driver.givenName} ${driver.familyName}</strong> | ${driver.code} (<i>${driver.permanentNumber}</i>)`,
+                `Date of birth: ${formatDate(driver.dateOfBirth)}`,
+                driver.nationality,
+                '', // Extra line break
+            ].join('\n');
         });
 
         ctx.replyWithHTML(response.join('\n'));
@@ -24,16 +29,65 @@ const drivers = function (ctx) {
 };
 
 const teams = function (ctx) {
-    const { standings } = F1.requests();
+    const { constructors } = F1.requests();
 
-    standings.getCurrentConstructorStanding().then((standingList) => {
-        // console.log(standingList);
+    constructors.getConstructorsByYear(dayjs().year()).then((teams) => {
+        // console.log(teams);
 
-        const response = standingList.map((team) => {
-            return `${team.positionText} | ${team.Constructor.name} - Points: ${team.points}`;
+        const response = teams.map((team) => {
+            return [`<strong>${team.name}</strong>`, team.nationality, ''].join(
+                '\n'
+            );
         });
 
-        ctx.reply(response.join('\n'));
+        ctx.replyWithHTML(response.join('\n'));
+    });
+};
+
+const tracks = function (ctx) {
+    const { circuits } = F1.requests();
+
+    circuits.getCircuitsByYear(dayjs().year()).then((tracks) => {
+        // console.log(tracks);
+
+        const response = tracks.map((track) => {
+            return [
+                `<strong>${track.circuitName}</strong>`,
+                `${track.Location.locality} (${track.Location.country})`,
+                `<a href="https://www.google.es/maps/@${track.Location.lat},${track.Location.long},15z">Open map</a>`,
+                '',
+            ].join('\n');
+        });
+
+        ctx.replyWithHTML(response.join('\n'));
+    });
+};
+
+const standings = function (ctx) {
+    const { standings } = F1.requests();
+
+    Promise.all([
+        standings.getCurrentDriverStanding(),
+        standings.getCurrentConstructorStanding(),
+    ]).then(([drivers, teams]) => {
+        // console.log(drivers);
+        // console.log(teams);
+
+        let response = ['<strong>Drivers</strong>'];
+        response = response.concat(
+            drivers.map((d) => {
+                return `${d.positionText} | ${d.Driver.code} - Points: ${d.points}`;
+            })
+        );
+
+        response.push('\n<strong>Constructors</strong>');
+        response = response.concat(
+            teams.map((t) => {
+                return `${t.positionText} | ${t.Constructor.name} - Points: ${t.points}`;
+            })
+        );
+
+        ctx.replyWithHTML(response.join('\n'));
     });
 };
 
@@ -171,4 +225,14 @@ const lastRace = function (ctx) {
     });
 };
 
-export { drivers, teams, calendar, current, next, lastQualy, lastRace };
+export {
+    drivers,
+    teams,
+    tracks,
+    standings,
+    calendar,
+    current,
+    next,
+    lastQualy,
+    lastRace,
+};
