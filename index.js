@@ -20,15 +20,15 @@ const bot = new Telegraf(Settings.token);
 bot.command('help', function (ctx) {
     ctx.replyWithHTML(
         [
-            '<pre>drivers</pre>\n  Show this year drivers details',
-            '<pre>teams</pre>\n  Show this year teams details',
-            '<pre>tracks</pre>\n  Show this year tracks details',
-            '<pre>standings</pre>\n  Show current standings for both championships',
-            '<pre>calendar</pre>\n  Show this year race calendar',
-            '<pre>current</pre>\n  Show the schedule for a race weekend in progress',
-            '<pre>next</pre>\n  Show the schedule for next race weekend',
-            '<pre>lastqualy</pre>\n  Show the results of last weekend qualifying',
-            '<pre>lastrace</pre>\n  Show the results of last weekend race',
+            '/drivers\n  Show this year drivers details',
+            '/teams\n  Show this year teams details',
+            '/tracks\n  Show this year tracks details',
+            '/standings\n  Show current standings for both championships',
+            '/calendar\n  Show this year race calendar',
+            '/current\n  Show the schedule for a race weekend in progress',
+            '/next\n  Show the schedule for next race weekend',
+            '/lastqualy\n  Show the results of last weekend qualifying',
+            '/lastrace\n  Show the results of last weekend race',
         ].join('\n')
     );
 });
