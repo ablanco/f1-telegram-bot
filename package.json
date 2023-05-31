@@ -18,9 +18,9 @@
     },
     "homepage": "https://github.com/ablanco/f1-telegram-bot#readme",
     "dependencies": {
-        "dayjs": "^1.11.6",
-        "formula-one-js": "^1.0.7",
-        "telegraf": "^4.10.0"
+        "dayjs": "^1.11.7",
+        "formula-one-js": "^1.0.8",
+        "telegraf": "^4.12.2"
     },
     "devDependencies": {
         "eslint": "^8.15.0",
