@@ -20,44 +20,85 @@ const formatDateTime = function (date, time) {
 };
 
 const renderWeekendCalendar = function (weekend) {
-    const response = [`<b>${weekend.raceName}</b>`];
-    let datetime;
+    const items = [`<b>${weekend.raceName}</b>`];
+    let response, datetime;
+
     if (weekend.FirstPractice) {
         datetime = formatDateTime(
             weekend.FirstPractice.date,
             weekend.FirstPractice.time
         );
-        response.push(`- FP1: ${datetime}`);
+        items.push({
+            label: `- FP1: ${datetime}`,
+            date: weekend.FirstPractice.date,
+            time: weekend.FirstPractice.time,
+        });
     }
     if (weekend.SecondPractice) {
         datetime = formatDateTime(
             weekend.SecondPractice.date,
             weekend.SecondPractice.time
         );
-        response.push(`- FP2: ${datetime}`);
+        items.push({
+            label: `- FP2: ${datetime}`,
+            date: weekend.SecondPractice.date,
+            time: weekend.SecondPractice.time,
+        });
     }
     if (weekend.ThirdPractice) {
         datetime = formatDateTime(
             weekend.ThirdPractice.date,
             weekend.ThirdPractice.time
         );
-        response.push(`- FP3: ${datetime}`);
+        items.push({
+            label: `- FP3: ${datetime}`,
+            date: weekend.ThirdPractice.date,
+            time: weekend.ThirdPractice.time,
+        });
     }
     if (weekend.Qualifying) {
         datetime = formatDateTime(
             weekend.Qualifying.date,
             weekend.Qualifying.time
         );
-        response.push(`- Qualy: ${datetime}`);
+        items.push({
+            label: `- Qualy: ${datetime}`,
+            date: weekend.Qualifying.date,
+            time: weekend.Qualifying.time,
+        });
     }
     if (weekend.Sprint) {
         datetime = formatDateTime(weekend.Sprint.date, weekend.Sprint.time);
-        response.push(`- Sprint: ${datetime}`);
+        items.push({
+            label: `- Sprint: ${datetime}`,
+            date: weekend.Sprint.date,
+            time: weekend.Sprint.time,
+        });
     }
     datetime = formatDateTime(weekend.date, weekend.time);
-    response.push(`- Race: ${datetime}`);
-    response.push('\n<i>Times are in CEST</i>');
+    items.push({
+        label: `- Race: ${datetime}`,
+        date: weekend.date,
+        time: weekend.time,
+    });
 
+    items.sort((a, b) => {
+        const ad = dayjs(`${a.date} ${a.time}`),
+            bd = dayjs(`${b.date} ${b.time}`);
+
+        if (ad.isBefore(bd)) {
+            return -1;
+        } else if (ad.isAfter(bd)) {
+            return 1;
+        }
+        return 0;
+    });
+
+    response = items.map((item) => {
+        return item.label;
+    });
+
+    response.push('\n<i>Times are in CEST</i>');
     return response;
 };
 
