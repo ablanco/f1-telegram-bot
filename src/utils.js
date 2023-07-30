@@ -20,8 +20,9 @@ const formatDateTime = function (date, time) {
 };
 
 const renderWeekendCalendar = function (weekend) {
-    const items = [`<b>${weekend.raceName}</b>`];
-    let response, datetime;
+    const items = [];
+    let response = [],
+        datetime;
 
     if (weekend.FirstPractice) {
         datetime = formatDateTime(
@@ -94,11 +95,14 @@ const renderWeekendCalendar = function (weekend) {
         return 0;
     });
 
-    response = items.map((item) => {
-        return item.label;
-    });
-
+    response.push(`<b>${weekend.raceName}</b>`);
+    response = response.concat(
+        items.map((item) => {
+            return item.label;
+        })
+    );
     response.push('\n<i>Times are in CEST</i>');
+
     return response;
 };
 
