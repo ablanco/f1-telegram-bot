@@ -22,7 +22,10 @@ const formatDateTime = function (date, time) {
 const renderWeekendCalendar = function (weekend) {
     const items = [];
     let response = [],
-        datetime;
+        datetime,
+        label;
+
+    console.log(weekend);
 
     if (weekend.FirstPractice) {
         datetime = formatDateTime(
@@ -40,8 +43,12 @@ const renderWeekendCalendar = function (weekend) {
             weekend.SecondPractice.date,
             weekend.SecondPractice.time
         );
+        label = `- FP2: ${datetime}`;
+        if (weekend.Sprint) {
+            label = `- Sprint Qualy: ${datetime}`;
+        }
         items.push({
-            label: `- FP2: ${datetime}`,
+            label: label,
             date: weekend.SecondPractice.date,
             time: weekend.SecondPractice.time,
         });
