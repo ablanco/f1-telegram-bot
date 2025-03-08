@@ -4,10 +4,10 @@
 import { Telegraf } from 'telegraf';
 import Settings from './src/settings.js';
 import {
-    drivers,
+    pilots,
     teams,
     tracks,
-    standings,
+    ranking,
     calendar,
     current,
     next,
@@ -33,10 +33,10 @@ bot.command('help', function (ctx) {
     );
 });
 
-bot.command('drivers', drivers);
+bot.command('drivers', pilots);
 bot.command('teams', teams);
 bot.command('tracks', tracks);
-bot.command('standings', standings);
+bot.command('standings', ranking);
 bot.command('calendar', calendar);
 bot.command('current', current);
 bot.command('next', next);

@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Alejandro Blanco <alejandro.b.e@gmail.com>
 // MIT License
 
-import F1 from 'formula-one-js';
+import { requests } from 'formula-one-js';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter.js';
 
@@ -9,9 +9,17 @@ import { formatDate, formatDateTime, renderWeekendCalendar } from './utils.js';
 
 dayjs.extend(isSameOrAfter);
 
-const drivers = function (ctx) {
-    const { drivers } = F1.requests();
+const {
+    drivers,
+    circuits,
+    constructors,
+    schedule,
+    standings,
+    qualifyings,
+    results,
+} = requests();
 
+const pilots = function (ctx) {
     drivers.getDriversByYear(dayjs().year()).then((drivers) => {
         // console.log(drivers);
 
@@ -29,14 +37,12 @@ const drivers = function (ctx) {
 };
 
 const teams = function (ctx) {
-    const { constructors } = F1.requests();
-
     constructors.getConstructorsByYear(dayjs().year()).then((teams) => {
         // console.log(teams);
 
         const response = teams.map((team) => {
             return [`<strong>${team.name}</strong>`, team.nationality, ''].join(
-                '\n'
+                '\n',
             );
         });
 
@@ -45,8 +51,6 @@ const teams = function (ctx) {
 };
 
 const tracks = function (ctx) {
-    const { circuits } = F1.requests();
-
     circuits.getCircuitsByYear(dayjs().year()).then((tracks) => {
         // console.log(tracks);
 
@@ -63,9 +67,7 @@ const tracks = function (ctx) {
     });
 };
 
-const standings = function (ctx) {
-    const { standings } = F1.requests();
-
+const ranking = function (ctx) {
     Promise.all([
         standings.getCurrentDriverStanding(),
         standings.getCurrentConstructorStanding(),
@@ -77,14 +79,14 @@ const standings = function (ctx) {
         response = response.concat(
             drivers.map((d) => {
                 return `${d.positionText} | ${d.Driver.code} - Points: ${d.points}`;
-            })
+            }),
         );
 
         response.push('\n<strong>Constructors</strong>');
         response = response.concat(
             teams.map((t) => {
                 return `${t.positionText} | ${t.Constructor.name} - Points: ${t.points}`;
-            })
+            }),
         );
 
         ctx.replyWithHTML(response.join('\n'));
@@ -92,7 +94,6 @@ const standings = function (ctx) {
 };
 
 const calendar = function (ctx) {
-    const { schedule } = F1.requests();
     const now = dayjs();
     let found = false;
 
@@ -123,7 +124,6 @@ const calendar = function (ctx) {
 };
 
 const current = function (ctx) {
-    const { schedule } = F1.requests();
     const now = dayjs();
 
     if (now.day() > 0 && now.day() < 5) {
@@ -151,7 +151,6 @@ const current = function (ctx) {
 };
 
 const next = function (ctx) {
-    const { schedule } = F1.requests();
     let now = dayjs();
 
     if (now.day() === 0 || now.day() > 4) {
@@ -174,8 +173,6 @@ const next = function (ctx) {
 };
 
 const lastQualy = function (ctx) {
-    const { qualifyings, results } = F1.requests();
-
     results.getLatestRaceResults().then((resultList) => {
         qualifyings
             .getQualifyingsByYearRace(resultList.season, resultList.round)
@@ -184,7 +181,7 @@ const lastQualy = function (ctx) {
 
                 let response = [
                     `<b>${qualifyingList.raceName}</b> - ${formatDate(
-                        qualifyingList.date
+                        qualifyingList.date,
                     )}`,
                 ];
                 response = response.concat(
@@ -198,7 +195,7 @@ const lastQualy = function (ctx) {
                             lap = `Q1: ${result.Q1}`;
                         }
                         return `${result.position} | ${result.Driver.code} (<i>${result.number}</i>) - ${lap}`;
-                    })
+                    }),
                 );
 
                 ctx.replyWithHTML(response.join('\n'));
@@ -207,8 +204,6 @@ const lastQualy = function (ctx) {
 };
 
 const lastRace = function (ctx) {
-    const { results } = F1.requests();
-
     results.getLatestRaceResults().then((resultList) => {
         // console.log(resultList);
 
@@ -218,7 +213,7 @@ const lastRace = function (ctx) {
         response = response.concat(
             resultList.Results.map((result) => {
                 return `${result.position} | ${result.Driver.code} (<i>${result.number}</i>) - ${result.status}`;
-            })
+            }),
         );
 
         ctx.replyWithHTML(response.join('\n'));
@@ -226,10 +221,10 @@ const lastRace = function (ctx) {
 };
 
 export {
-    drivers,
+    pilots,
     teams,
     tracks,
-    standings,
+    ranking,
     calendar,
     current,
     next,
